@@ -23,6 +23,7 @@ class CryptoGuardConan(ConanFile):
         deps.generate()
         
         tc = CMakeToolchain(self)
+       
         tc.generate()
     
     def build(self):
