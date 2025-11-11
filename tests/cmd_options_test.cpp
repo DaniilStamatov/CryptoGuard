@@ -110,3 +110,63 @@ TEST(ProgramOptions, MissingInput) {
     EXPECT_FALSE(op.IsValid());
     EXPECT_NE(err.find("the option '--input' is required but missing"), std::string::npos);
 }
+
+TEST(ProgramOptions, UnknownOption) {
+    const char *argv[] = {"program", "--unknown-option", "value"};
+    CryptoGuard::ProgramOptions op;
+
+    testing::internal::CaptureStderr();
+    op.Parse(3, const_cast<char **>(argv));
+    std::string error = testing::internal::GetCapturedStderr();
+
+    EXPECT_NE(error.find("unrecognised option"), std::string::npos);
+    EXPECT_FALSE(op.IsValid());
+}
+
+TEST(ProgramOptions, InvalidCommandValue) {
+    const char *argv[] = {"program", "--command", "invalid_command", "--input", "file.txt"};
+    CryptoGuard::ProgramOptions op;
+
+    testing::internal::CaptureStderr();
+    op.Parse(5, const_cast<char **>(argv));
+    std::string error = testing::internal::GetCapturedStderr();
+
+    EXPECT_NE(error.find("unknown command"), std::string::npos);
+    EXPECT_FALSE(op.IsValid());
+}
+
+TEST(ProgramOptions, MissingOptionValue) {
+    const char *argv[] = {"program", "--command"};
+    CryptoGuard::ProgramOptions op;
+
+    testing::internal::CaptureStderr();
+    op.Parse(2, const_cast<char **>(argv));
+    std::string error = testing::internal::GetCapturedStderr();
+
+    EXPECT_NE(error.find("command"), std::string::npos);
+    EXPECT_FALSE(op.IsValid());
+}
+
+TEST(ProgramOptions, ShortOptions) {
+    const char *argv[] = {"program", "-c", "encrypt", "-i", "input.txt", "-o", "out.bin", "-p", "1234"};
+    CryptoGuard::ProgramOptions op;
+
+    op.Parse(9, const_cast<char **>(argv));
+
+    EXPECT_TRUE(op.IsValid());
+    EXPECT_EQ(op.GetCommand(), CryptoGuard::ProgramOptions::COMMAND_TYPE::ENCRYPT);
+    EXPECT_EQ(op.GetInputFile(), "input.txt");
+    EXPECT_EQ(op.GetOutputFile(), "out.bin");
+    EXPECT_EQ(op.GetPassword(), "1234");
+}
+
+TEST(ProgramOptions, MixedShortLongOptions) {
+    const char *argv[] = {"program", "-c", "checksum", "--input", "input.txt"};
+    CryptoGuard::ProgramOptions op;
+
+    op.Parse(5, const_cast<char **>(argv));
+
+    EXPECT_TRUE(op.IsValid());
+    EXPECT_EQ(op.GetCommand(), CryptoGuard::ProgramOptions::COMMAND_TYPE::CHECKSUM);
+    EXPECT_EQ(op.GetInputFile(), "input.txt");
+}

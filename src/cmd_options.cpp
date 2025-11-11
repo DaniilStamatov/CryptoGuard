@@ -9,7 +9,7 @@
 namespace CryptoGuard {
 
 ProgramOptions::ProgramOptions() : desc_("Allowed options") {
-    desc_.add_options()("help", "Help message")("command", po::value<std::string>()->required(),
+    desc_.add_options()("help", "Help message")("command,c", po::value<std::string>()->required(),
                                                 "Command: encrypt, decrypt, checksum")(
         "input,i", po::value<std::string>()->required(), "Path to input file")(
         "output,o", po::value<std::string>(), "Path to output file")("password,p", po::value<std::string>(),
