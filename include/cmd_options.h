@@ -20,6 +20,7 @@ public:
     [[nodiscard]] std::string GetOutputFile() const { return outputFile_; }
     [[nodiscard]] std::string GetPassword() const { return password_; }
     [[nodiscard]] bool IsValid() const { return valid_; }
+    [[nodiscard]] bool HelpRequested() const { return help_requested_; }
 
 private:
     bool TryParseCommandLine(int argc, char *argv[]) noexcept;

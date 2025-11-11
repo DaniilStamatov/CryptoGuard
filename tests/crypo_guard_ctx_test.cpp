@@ -101,3 +101,32 @@ TEST_F(CryptoGuardCtxStringStreamTest, DecryptPartialData) {
 
     ASSERT_THROW(ctx.DecryptFile(partial_stream, decrypted, "password"), std::runtime_error);
 }
+
+TEST_F(CryptoGuardCtxStringStreamTest, ChecksumSimpleTest) {
+    std::stringstream input("test data");
+
+    std::string checksum = ctx.CalculateChecksum(input);
+
+    ASSERT_FALSE(checksum.empty());
+    ASSERT_EQ(checksum.length(), 64);
+}
+
+TEST_F(CryptoGuardCtxStringStreamTest, ChecksumSameInput) {
+    std::stringstream input1("same data");
+    std::stringstream input2("same data");
+
+    std::string checksum1 = ctx.CalculateChecksum(input1);
+    std::string checksum2 = ctx.CalculateChecksum(input2);
+
+    ASSERT_EQ(checksum1, checksum2);
+}
+
+TEST_F(CryptoGuardCtxStringStreamTest, ChecksumDifferentData) {
+    std::stringstream input1("data1");
+    std::stringstream input2("data2");
+
+    std::string checksum1 = ctx.CalculateChecksum(input1);
+    std::string checksum2 = ctx.CalculateChecksum(input2);
+
+    ASSERT_NE(checksum1, checksum2);
+}
