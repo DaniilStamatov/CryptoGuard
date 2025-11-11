@@ -1,5 +1,6 @@
 #pragma once
 
+#include <experimental/propagate_const>
 #include <memory>
 #include <string>
 namespace CryptoGuard {
@@ -22,7 +23,7 @@ public:
 
 private:
     class PImpl;
-    std::unique_ptr<PImpl> pImpl_;
+    std::experimental::propagate_const<std::unique_ptr<PImpl>> pImpl_;
 };
 
 }  // namespace CryptoGuard
